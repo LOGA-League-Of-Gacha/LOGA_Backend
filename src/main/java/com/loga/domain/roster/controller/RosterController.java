@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * 로스터 API 컨트롤러
  */
 @RestController
-@RequestMapping("/api/v1/rosters")
+@RequestMapping("/api/rosters")
 @RequiredArgsConstructor
 public class RosterController {
 

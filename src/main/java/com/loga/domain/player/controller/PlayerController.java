@@ -17,7 +17,7 @@ import java.util.List;
  * 선수 API 컨트롤러
  */
 @RestController
-@RequestMapping("/api/v1/players")
+@RequestMapping("/api/players")
 @RequiredArgsConstructor
 public class PlayerController {
 

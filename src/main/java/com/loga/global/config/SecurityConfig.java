@@ -57,23 +57,23 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
-                        .requestMatchers("/api/v1/auth/**")
+                        .requestMatchers("/api/auth/**")
                         .permitAll()
                         .requestMatchers("/oauth2/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/players/**")
+                        .requestMatchers(HttpMethod.GET, "/api/players/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/gacha/**")
+                        .requestMatchers(HttpMethod.POST, "/api/gacha/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/championships/**")
+                        .requestMatchers(HttpMethod.GET, "/api/championships/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/rosters/**")
+                        .requestMatchers(HttpMethod.GET, "/api/rosters/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/community/**")
+                        .requestMatchers(HttpMethod.GET, "/api/community/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/statistics/**")
+                        .requestMatchers(HttpMethod.GET, "/api/statistics/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/reports")
+                        .requestMatchers(HttpMethod.POST, "/api/reports")
                         .permitAll()
                         // Swagger UI
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**")
@@ -81,7 +81,7 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health", "/actuator/info")
                         .permitAll()
                         // Admin endpoints
-                        .requestMatchers("/api/v1/admin/**")
+                        .requestMatchers("/api/admin/**")
                         .hasRole("ADMIN")
                         // Authenticated endpoints
                         .anyRequest()
@@ -113,8 +113,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
-        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "X-API-Version", "Accept-Version"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "X-API-Version"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 

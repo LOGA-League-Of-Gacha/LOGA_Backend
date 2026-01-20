@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * 가챠 API 컨트롤러
  */
 @RestController
-@RequestMapping("/api/v1/gacha")
+@RequestMapping("/api/gacha")
 @RequiredArgsConstructor
 public class GachaController {
 

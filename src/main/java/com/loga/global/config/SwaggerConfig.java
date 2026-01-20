@@ -55,9 +55,11 @@ public class SwaggerConfig {
                     - Google OAuth2 로그인 지원
                     - JWT Bearer 토큰 인증
 
-                    ### API 버전
-                    - 현재 버전: v1
-                    - URL 버전닝 방식 사용 (`/api/v1/...`)
+                    ### API 버전 (헤더 기반)
+                    - **현재 버전**: 1.0.0
+                    - **버전 헤더**: `X-API-Version: 1` 또는 `Accept-Version: v1`
+                    - **Fallback**: 헤더 없거나 미지원 버전 → v1 자동 적용
+                    - **응답 헤더**: `X-API-Version`으로 실제 적용 버전 반환
                     """)
                 .version("1.0.0")
                 .contact(new Contact()
