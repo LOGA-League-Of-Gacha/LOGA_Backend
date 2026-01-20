@@ -91,8 +91,14 @@ jobs:
                   echo "EOF" >> $GITHUB_ENV
 
             - name: Send Discord Notification (Success)
-              if: success() && secrets.DISCORD_DEPLOY_WEBHOOK_URL != ''
+              if: success()
+              env:
+                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_DEPLOY_WEBHOOK_URL }}
               run: |
+                  if [ -z "$DISCORD_WEBHOOK" ]; then
+                    echo "Discord webhook not configured, skipping notification"
+                    exit 0
+                  fi
                   COMMIT_MSG=$(git log -1 --pretty=%s | head -c 100)
                   COMMIT_AUTHOR=$(git log -1 --pretty=%an)
                   COMMIT_SHA=$(git rev-parse --short HEAD)
@@ -125,8 +131,14 @@ jobs:
                        ${{ secrets.DISCORD_DEPLOY_WEBHOOK_URL }}
 
             - name: Send Discord Notification (Failure)
-              if: failure() && secrets.DISCORD_DEPLOY_WEBHOOK_URL != ''
+              if: failure()
+              env:
+                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_DEPLOY_WEBHOOK_URL }}
               run: |
+                  if [ -z "$DISCORD_WEBHOOK" ]; then
+                    echo "Discord webhook not configured, skipping notification"
+                    exit 0
+                  fi
                   COMMIT_MSG=$(git log -1 --pretty=%s | head -c 100)
                   COMMIT_AUTHOR=$(git log -1 --pretty=%an)
                   COMMIT_SHA=$(git rev-parse --short HEAD)
