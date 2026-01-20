@@ -1,0 +1,166 @@
+name: Deploy to AWS (Main)
+
+on:
+    push:
+        branches: [main]
+
+env:
+    GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+    GAR_LOCATION: ${{ secrets.GAR_LOCATION }}
+    SERVICE_NAME: loga
+    AWS_INSTANCE_HOST: ${{ secrets.AWS_INSTANCE_HOST }}
+
+jobs:
+    build-and-deploy:
+        name: Build and Deploy to AWS (Main)
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: 'read'
+            id-token: 'write'
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Authenticate to Google Cloud
+              id: auth
+              uses: google-github-actions/auth@v2
+              with:
+                  workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
+                  service_account: '${{ secrets.GCP_SA_EMAIL }}'
+
+            - name: Set up Docker Buildx
+              id: buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Configure Docker for GAR
+              run: gcloud auth configure-docker ${{ env.GAR_LOCATION }} --quiet
+
+            - name: Build and push Docker image
+              id: docker_build
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  push: true
+                  tags: ${{ env.GAR_LOCATION }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}/loga-backend:${{ github.sha }}
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
+
+            - name: Setup SSH for AWS Instance
+              run: |
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/aws_key
+                  chmod 600 ~/.ssh/aws_key
+                  ssh-keyscan -H "${{ secrets.AWS_INSTANCE_HOST }}" >> ~/.ssh/known_hosts || echo "SSH keyscan failed, will use StrictHostKeyChecking=no"
+
+            - name: Deploy to AWS Instance
+              env:
+                  GAR_LOCATION: ${{ env.GAR_LOCATION }}
+                  GCP_PROJECT_ID: ${{ env.GCP_PROJECT_ID }}
+                  SERVICE_NAME: ${{ env.SERVICE_NAME }}
+                  COMMIT_SHA: ${{ github.sha }}
+              run: |
+                  echo "🚀 Starting deployment to AWS instance..."
+                  ssh -i ~/.ssh/aws_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_INSTANCE_HOST }} << ENDSSH > deploy.log 2>&1
+                  set -e
+
+                  echo "📦 Authenticating with Artifact Registry..."
+                  gcloud auth activate-service-account --key-file=/home/ubuntu/gcp-service-account.json
+                  gcloud auth configure-docker ${GAR_LOCATION} --quiet
+
+                  cd /home/ubuntu/loga || { echo "❌ Directory not found"; exit 1; }
+
+                  echo "📥 Pulling latest code..."
+                  git pull origin main
+
+                  echo "🐳 Pulling Docker image from Artifact Registry..."
+                  IMAGE_TAG="${GAR_LOCATION}/${GCP_PROJECT_ID}/${SERVICE_NAME}/loga-backend:${COMMIT_SHA}"
+                  docker pull "\$IMAGE_TAG"
+                  docker tag "\$IMAGE_TAG" loga-backend:latest
+                  docker tag "\$IMAGE_TAG" loga-backend:${COMMIT_SHA}
+
+                  echo "Running Blue-Green deployment..."
+                  bash deploy.sh ${COMMIT_SHA}
+
+                  echo "✅ Deployment completed successfully!"
+                  ENDSSH
+                  cat deploy.log
+                  echo "DEPLOY_LOG<<EOF" >> $GITHUB_ENV
+                  cat deploy.log >> $GITHUB_ENV
+                  echo "EOF" >> $GITHUB_ENV
+
+            - name: Send Discord Notification (Success)
+              if: success()
+              run: |
+                  COMMIT_MSG=$(git log -1 --pretty=%s | head -c 100)
+                  COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+                  COMMIT_SHA=$(git rev-parse --short HEAD)
+
+                  # 배포 로그에서 활성 컨테이너 추출
+                  ACTIVE_CONTAINER=$(echo "$DEPLOY_LOG" | grep -oP 'Active Container: \K(blue|green)' || echo "unknown")
+                  ACTIVE_PORT=$(echo "$DEPLOY_LOG" | grep -oP 'Active Container: (?:blue|green) \(port \K[0-9]+' || echo "unknown")
+
+                  # JSON 특수문자 이스케이프
+                  COMMIT_MSG_ESCAPED=$(echo "$COMMIT_MSG" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g')
+
+                  curl -H "Content-Type: application/json" \
+                       -X POST \
+                       -d "{
+                         \"embeds\": [{
+                           \"title\": \"🎮 LOGA 프로덕션 배포 성공\",
+                           \"description\": \"Main 브랜치가 AWS 인스턴스에 성공적으로 배포되었습니다.\",
+                           \"color\": 3066993,
+                           \"fields\": [
+                             {\"name\": \"서버\", \"value\": \"AWS Instance\", \"inline\": true},
+                             {\"name\": \"배포 방식\", \"value\": \"Docker Blue-Green\", \"inline\": true},
+                             {\"name\": \"활성 컨테이너\", \"value\": \"${ACTIVE_CONTAINER} (포트 ${ACTIVE_PORT})\", \"inline\": true},
+                             {\"name\": \"커밋 SHA\", \"value\": \"$COMMIT_SHA\", \"inline\": true},
+                             {\"name\": \"커밋 작성자\", \"value\": \"$COMMIT_AUTHOR\", \"inline\": true},
+                             {\"name\": \"커밋 메시지\", \"value\": \"${COMMIT_MSG_ESCAPED}\", \"inline\": false}
+                           ],
+                           \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+                         }]
+                       }" \
+                       ${{ secrets.DISCORD_DEPLOY_WEBHOOK_URL }}
+
+            - name: Send Discord Notification (Failure)
+              if: failure()
+              run: |
+                  COMMIT_MSG=$(git log -1 --pretty=%s | head -c 100)
+                  COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+                  COMMIT_SHA=$(git rev-parse --short HEAD)
+
+                  # 배포 로그에서 실패한 컨테이너 추출
+                  FAILED_CONTAINER=$(echo "$DEPLOY_LOG" | grep -oP '(blue|green) deployment failed' | grep -oP '(blue|green)' || echo "unknown")
+                  ROLLBACK_CONTAINER=$(echo "$DEPLOY_LOG" | grep -oP 'Rolling back to \K(blue|green)' || echo "unknown")
+
+                  # 실패한 컨테이너 정보
+                  if [ "$FAILED_CONTAINER" != "unknown" ]; then
+                    FAIL_INFO="실패한 컨테이너: ${FAILED_CONTAINER}, 롤백 완료: ${ROLLBACK_CONTAINER}"
+                  else
+                    FAIL_INFO="배포 과정에서 오류 발생"
+                  fi
+
+                  # JSON 특수문자 이스케이프
+                  COMMIT_MSG_ESCAPED=$(echo "$COMMIT_MSG" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g')
+
+                  curl -H "Content-Type: application/json" \
+                       -X POST \
+                       -d "{
+                         \"embeds\": [{
+                           \"title\": \"❌ LOGA 프로덕션 배포 실패\",
+                           \"description\": \"Main 브랜치 배포 중 오류가 발생했습니다. ${FAIL_INFO}\",
+                           \"color\": 15158332,
+                           \"fields\": [
+                             {\"name\": \"서버\", \"value\": \"AWS Instance\", \"inline\": true},
+                             {\"name\": \"배포 방식\", \"value\": \"Docker Blue-Green\", \"inline\": true},
+                             {\"name\": \"커밋 SHA\", \"value\": \"$COMMIT_SHA\", \"inline\": true},
+                             {\"name\": \"커밋 작성자\", \"value\": \"$COMMIT_AUTHOR\", \"inline\": true},
+                             {\"name\": \"커밋 메시지\", \"value\": \"${COMMIT_MSG_ESCAPED}\", \"inline\": false},
+                             {\"name\": \"로그 확인\", \"value\": \"[GitHub Actions 로그 보기](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\", \"inline\": false}
+                           ],
+                           \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+                         }]
+                       }" \
+                       ${{ secrets.DISCORD_DEPLOY_WEBHOOK_URL }}

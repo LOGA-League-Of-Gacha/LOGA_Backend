@@ -1,0 +1,93 @@
+# =============================================================================
+# LOGA Backend - Docker Compose (4GB 인스턴스 최적화)
+# =============================================================================
+# 메모리 배분 (4GB 기준):
+#   - 시스템 예약: ~512MB
+#   - Blue/Green (하나만 활성): 1GB
+#   - 여유: ~2.5GB (빌드, 버퍼 등)
+#
+# 사용법:
+#   전체 실행: docker compose up -d
+#   앱만 실행: docker compose up -d blue
+#   Blue-Green 배포: bash deploy.sh
+# =============================================================================
+
+services:
+    # =========================================================================
+    # 앱 서비스 (Blue-Green 배포)
+    # =========================================================================
+    blue:
+        image: loga-backend:latest
+        build: .
+        container_name: loga_blue
+        ports:
+            - '8080:8080'
+        env_file:
+            - .env.production
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod
+            - CONTAINER_NAME=blue
+        volumes:
+            - ./logs:/app/logs
+        restart: unless-stopped
+        networks:
+            - loga_network
+        healthcheck:
+            test: ['CMD-SHELL', 'curl -f http://localhost:8080/actuator/health || exit 1']
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 60s
+        deploy:
+            resources:
+                limits:
+                    memory: 1024M
+                reservations:
+                    memory: 512M
+        labels:
+            - 'deployment=blue'
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '10m'
+                max-file: '3'
+
+    green:
+        image: loga-backend:latest
+        build: .
+        container_name: loga_green
+        ports:
+            - '8081:8080'
+        env_file:
+            - .env.production
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod
+            - CONTAINER_NAME=green
+        volumes:
+            - ./logs:/app/logs
+        restart: unless-stopped
+        networks:
+            - loga_network
+        healthcheck:
+            test: ['CMD-SHELL', 'curl -f http://localhost:8080/actuator/health || exit 1']
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 60s
+        deploy:
+            resources:
+                limits:
+                    memory: 1024M
+                reservations:
+                    memory: 512M
+        labels:
+            - 'deployment=green'
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '10m'
+                max-file: '3'
+
+networks:
+    loga_network:
+        driver: bridge

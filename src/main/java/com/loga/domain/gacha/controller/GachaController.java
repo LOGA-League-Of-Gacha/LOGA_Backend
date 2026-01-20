@@ -1,0 +1,53 @@
+package com.loga.domain.gacha.controller;
+
+import com.loga.domain.gacha.dto.GachaResultResponse;
+import com.loga.domain.gacha.service.GachaService;
+import com.loga.domain.user.entity.User;
+import com.loga.global.common.dto.response.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * 가챠 API 컨트롤러
+ */
+@RestController
+@RequestMapping("/api/v1/gacha")
+@RequiredArgsConstructor
+public class GachaController {
+
+    private final GachaService gachaService;
+
+    /**
+     * 특정 포지션 랜덤 뽑기
+     */
+    @PostMapping("/draw/{position}")
+    public ResponseEntity<ApiResponse<GachaResultResponse>> drawByPosition(
+            @PathVariable String position,
+            @AuthenticationPrincipal User user) {
+        String userId = user != null ? user.getId() : null;
+        return ResponseEntity.ok(ApiResponse.success(gachaService.drawByPosition(position, userId)));
+    }
+
+    /**
+     * 전체 포지션 랜덤 뽑기 (5명)
+     */
+    @PostMapping("/draw/full")
+    public ResponseEntity<ApiResponse<GachaResultResponse>> drawFullRoster(
+            @AuthenticationPrincipal User user) {
+        String userId = user != null ? user.getId() : null;
+        return ResponseEntity.ok(ApiResponse.success(gachaService.drawFullRoster(userId)));
+    }
+
+    /**
+     * 리롤 (로그인 필요)
+     */
+    @PostMapping("/reroll/{position}")
+    public ResponseEntity<ApiResponse<GachaResultResponse>> reroll(
+            @PathVariable String position,
+            @AuthenticationPrincipal User user) {
+        String userId = user != null ? user.getId() : null;
+        return ResponseEntity.ok(ApiResponse.success(gachaService.reroll(position, userId)));
+    }
+}
