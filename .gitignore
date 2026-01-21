@@ -44,7 +44,7 @@ out/
 src/main/resources/application-local.yml
 src/main/resources/application-prod.yml
 src/main/resources/application-dev.yml
-.env
+src/main/resources/application.yml
 .env.local
 .env.production
 *.env
@@ -71,3 +71,5 @@ scripts/
 ### OS ###
 .DS_Store
 Thumbs.db
+
+.serena/
