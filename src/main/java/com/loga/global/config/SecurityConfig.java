@@ -92,10 +92,22 @@ public class SecurityConfig {
         // OAuth2 설정은 Google 자격 증명이 있을 때만 활성화
         if (isOAuth2Enabled()) {
             http.oauth2Login(oauth2 -> oauth2
+                    .loginPage("/api/auth/login")  // 커스텀 로그인 페이지 (리다이렉트 방지)
+                    .authorizationEndpoint(auth -> auth
+                            .baseUri("/oauth2/authorization"))  // OAuth2 시작점 명시
                     .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                     .successHandler(oAuth2AuthenticationSuccessHandler)
             );
         }
+
+        // 인증 실패 시 401 반환 (리다이렉트 대신)
+        http.exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(401);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"success\":false,\"message\":\"Unauthorized\"}");
+                })
+        );
 
         return http.build();
     }
