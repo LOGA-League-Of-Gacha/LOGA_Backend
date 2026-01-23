@@ -30,10 +30,10 @@ public class PlayerRepositoryCustomImpl implements PlayerRepositoryCustom {
                 .contains("name", condition.getName())
                 .eq("position", condition.getPosition())
                 .eq("region", condition.getRegion())
-                .eq("currentTeam", condition.getTeam())
+                .eq("teamShort", condition.getTeam()) // Changed to teamShort
                 .eq("isActive", condition.getIsActive())
                 .addIf(condition.getHasChampionship() != null && condition.getHasChampionship(),
-                        builder -> builder.exists("championships", true))
+                        builder -> builder.eq("isWinner", true)) // Changed to isWinner
                 .build();
 
         long total = mongoTemplate.count(query, Player.class);

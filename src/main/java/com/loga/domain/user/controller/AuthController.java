@@ -17,30 +17,24 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthApi {
 
     private final AuthService authService;
 
-    /**
-     * 현재 로그인한 유저 정보 조회
-     */
+    @Override
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(ApiResponse.success(authService.getCurrentUser(user)));
     }
 
-    /**
-     * 토큰 갱신
-     */
+    @Override
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<TokenResponse>> refreshToken(
             @RequestParam @NotBlank String refreshToken) {
         return ResponseEntity.ok(ApiResponse.success(authService.refreshToken(refreshToken)));
     }
 
-    /**
-     * Google OAuth2 로그인 안내
-     */
+    @Override
     @GetMapping("/google")
     public ResponseEntity<ApiResponse<String>> googleLoginInfo() {
         String message = "Redirect to /oauth2/authorization/google to start Google OAuth2 login";

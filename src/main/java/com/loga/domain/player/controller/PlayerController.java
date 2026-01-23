@@ -19,29 +19,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/players")
 @RequiredArgsConstructor
-public class PlayerController {
+public class PlayerController implements PlayerApi {
 
     private final PlayerService playerService;
 
-    /**
-     * 전체 선수 목록
-     */
+    @Override
     @GetMapping
     public ResponseEntity<ApiResponse<List<PlayerResponse>>> getAllPlayers() {
         return ResponseEntity.ok(ApiResponse.success(playerService.getAllPlayers()));
     }
 
-    /**
-     * 선수 상세 조회
-     */
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PlayerResponse>> getPlayer(@PathVariable String id) {
         return ResponseEntity.ok(ApiResponse.success(playerService.getPlayerById(id)));
     }
 
-    /**
-     * 선수 검색 (Specification 패턴)
-     */
+    @Override
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<PageResponse<PlayerResponse>>> searchPlayers(
             @RequestParam(required = false) String name,
@@ -66,9 +60,7 @@ public class PlayerController {
                 playerService.searchPlayers(condition, PageRequest.of(page, size).toPageable())));
     }
 
-    /**
-     * 포지션별 선수 목록
-     */
+    @Override
     @GetMapping("/position/{position}")
     public ResponseEntity<ApiResponse<List<PlayerResponse>>> getPlayersByPosition(
             @PathVariable String position) {
@@ -76,35 +68,27 @@ public class PlayerController {
         return ResponseEntity.ok(ApiResponse.success(playerService.getPlayersByPosition(pos)));
     }
 
-    /**
-     * 리전별 선수 목록
-     */
+    @Override
     @GetMapping("/region/{region}")
     public ResponseEntity<ApiResponse<List<PlayerResponse>>> getPlayersByRegion(
             @PathVariable String region) {
         return ResponseEntity.ok(ApiResponse.success(playerService.getPlayersByRegion(region)));
     }
 
-    /**
-     * 팀별 선수 목록
-     */
+    @Override
     @GetMapping("/team/{team}")
     public ResponseEntity<ApiResponse<List<PlayerResponse>>> getPlayersByTeam(
             @PathVariable String team) {
         return ResponseEntity.ok(ApiResponse.success(playerService.getPlayersByTeam(team)));
     }
 
-    /**
-     * 가장 많이 뽑힌 선수 TOP 10
-     */
+    @Override
     @GetMapping("/top-picked")
     public ResponseEntity<ApiResponse<List<PlayerResponse>>> getTopPickedPlayers() {
         return ResponseEntity.ok(ApiResponse.success(playerService.getTopPickedPlayers()));
     }
 
-    /**
-     * 현역 선수 목록
-     */
+    @Override
     @GetMapping("/active")
     public ResponseEntity<ApiResponse<List<PlayerResponse>>> getActivePlayers() {
         return ResponseEntity.ok(ApiResponse.success(playerService.getActivePlayers()));

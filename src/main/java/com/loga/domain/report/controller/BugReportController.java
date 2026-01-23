@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
-public class BugReportController {
+public class BugReportController implements BugReportApi {
 
     private final BugReportService bugReportService;
 
+    @Override
     @PostMapping
     public ResponseEntity<ApiResponse<BugReportResponse>> createReport(
             @Valid @RequestBody CreateBugReportRequest request,
@@ -29,6 +30,7 @@ public class BugReportController {
         return ResponseEntity.ok(ApiResponse.success(bugReportService.createReport(request, user)));
     }
 
+    @Override
     @GetMapping("/my")
     public ResponseEntity<ApiResponse<PageResponse<BugReportResponse>>> getMyReports(
             @AuthenticationPrincipal User user,
@@ -38,6 +40,7 @@ public class BugReportController {
                 bugReportService.getMyReports(user.getId(), PageRequest.of(page, size).toPageable())));
     }
 
+    @Override
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<PageResponse<BugReportResponse>>> getAllReports(
@@ -48,6 +51,7 @@ public class BugReportController {
                 bugReportService.getAllReports(status, PageRequest.of(page, size).toPageable())));
     }
 
+    @Override
     @PatchMapping("/admin/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BugReportResponse>> updateReportStatus(
