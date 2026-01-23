@@ -15,13 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/gacha")
 @RequiredArgsConstructor
-public class GachaController {
+public class GachaController implements GachaApi {
 
     private final GachaService gachaService;
 
-    /**
-     * 특정 포지션 랜덤 뽑기
-     */
+    @Override
     @PostMapping("/draw/{position}")
     public ResponseEntity<ApiResponse<GachaResultResponse>> drawByPosition(
             @PathVariable String position,
@@ -30,9 +28,7 @@ public class GachaController {
         return ResponseEntity.ok(ApiResponse.success(gachaService.drawByPosition(position, userId)));
     }
 
-    /**
-     * 전체 포지션 랜덤 뽑기 (5명)
-     */
+    @Override
     @PostMapping("/draw/full")
     public ResponseEntity<ApiResponse<GachaResultResponse>> drawFullRoster(
             @AuthenticationPrincipal User user) {
@@ -40,9 +36,7 @@ public class GachaController {
         return ResponseEntity.ok(ApiResponse.success(gachaService.drawFullRoster(userId)));
     }
 
-    /**
-     * 리롤 (로그인 필요)
-     */
+    @Override
     @PostMapping("/reroll/{position}")
     public ResponseEntity<ApiResponse<GachaResultResponse>> reroll(
             @PathVariable String position,
