@@ -28,6 +28,9 @@ public class AuthService {
      * 현재 유저 정보 조회
      */
     public UserResponse getCurrentUser(User user) {
+        if (user == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
         return UserResponse.from(user);
     }
 

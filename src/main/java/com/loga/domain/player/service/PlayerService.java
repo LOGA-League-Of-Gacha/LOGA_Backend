@@ -75,7 +75,7 @@ public class PlayerService {
      * 팀별 선수 목록
      */
     public List<PlayerResponse> getPlayersByTeam(String team) {
-        return playerRepository.findByCurrentTeam(team).stream()
+        return playerRepository.findByTeamShort(team).stream()
                 .map(PlayerResponse::from)
                 .toList();
     }

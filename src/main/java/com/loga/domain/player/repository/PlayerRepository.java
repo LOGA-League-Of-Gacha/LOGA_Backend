@@ -18,7 +18,8 @@ public interface PlayerRepository extends MongoRepository<Player, String>, Playe
 
     List<Player> findByRegion(String region);
 
-    List<Player> findByCurrentTeam(String team);
+    // Changed from currentTeam to teamShort
+    List<Player> findByTeamShort(String teamShort);
 
     List<Player> findByIsActiveTrue();
 
@@ -29,13 +30,13 @@ public interface PlayerRepository extends MongoRepository<Player, String>, Playe
     List<Player> findTop10ByOrderByPickedCountDesc();
 
     @Aggregation(pipeline = {
-        "{ $match: { position: ?0 } }",
-        "{ $sample: { size: 1 } }"
+            "{ $match: { position: ?0 } }",
+            "{ $sample: { size: 1 } }"
     })
     Optional<Player> findRandomByPosition(String position);
 
     @Aggregation(pipeline = {
-        "{ $sample: { size: ?0 } }"
+            "{ $sample: { size: ?0 } }"
     })
     List<Player> findRandomPlayers(int count);
 }

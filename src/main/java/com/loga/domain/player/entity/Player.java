@@ -5,12 +5,9 @@ import lombok.*;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * 선수 도메인 엔티티
- * DDD Aggregate Root
+ * 선수 도메인 엔티티 (Season Card Model)
+ * 각 문서는 특정 시즌의 선수 카드를 나타냄
  */
 @Document(collection = "players")
 @Getter
@@ -24,83 +21,63 @@ public class Player extends BaseDocument {
 
     private String realName;
 
-    private String realNameKo;
-
     @Indexed
     private Position position;
 
-    private String nationality;
+    private int year;
 
-    private String profileImage;
+    @Indexed
+    private String teamShort;
 
-    @Builder.Default
-    private List<String> teams = new ArrayList<>();
+    private String teamFull;
 
-    private String currentTeam;
+    private String teamColor;
 
     @Indexed
     private String region;
 
-    @Builder.Default
-    private List<Championship> championships = new ArrayList<>();
+    private String nationality;
 
-    @Builder.Default
-    private List<SeasonStats> seasonStats = new ArrayList<>();
+    private String iso;
+
+    private boolean isWinner;
+
+    private String championshipLeague;
+
+    private Integer championshipYear;
 
     @Builder.Default
     private int pickedCount = 0;
 
-    private boolean isActive;
+    private String profileImage;
+
+    @Builder.Default
+    private boolean isActive = true;
 
     public enum Position {
         TOP, JUNGLE, MID, ADC, SUPPORT
     }
 
-    // ===== Value Objects =====
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Championship {
-        private String tournament;
-        private int year;
-        private String team;
-
-        public String getDisplayName() {
-            return year + " " + tournament + " - " + team;
-        }
-    }
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class SeasonStats {
-        private int year;
-        private String team;
-        private String league;
-        private double kda;
-        private double winRate;
-        private int gamesPlayed;
-        private double csPerMin;
-        private double damageShare;
-        private double goldShare;
-    }
-
     // ===== Factory Methods =====
 
-    public static Player create(String name, String realName, String realNameKo,
-                                 Position position, String nationality, String region) {
-        return Player.builder()
+    public static Player create(String id, String name, String realName, Position position, int year,
+            String teamShort, String teamFull, String teamColor,
+            String region, String nationality, String iso) {
+        Player player = Player.builder()
                 .name(name)
                 .realName(realName)
-                .realNameKo(realNameKo)
                 .position(position)
-                .nationality(nationality)
+                .year(year)
+                .teamShort(teamShort)
+                .teamFull(teamFull)
+                .teamColor(teamColor)
                 .region(region)
+                .nationality(nationality)
+                .iso(iso)
                 .isActive(true)
                 .build();
+        player.setId(id);
+        return player;
     }
 
     // ===== Domain Logic =====
@@ -113,59 +90,9 @@ public class Player extends BaseDocument {
     }
 
     /**
-     * 팀 변경
+     * 우승 멤버 여부 확인
      */
-    public void changeTeam(String newTeam) {
-        if (this.currentTeam != null && !this.teams.contains(this.currentTeam)) {
-            this.teams.add(this.currentTeam);
-        }
-        this.currentTeam = newTeam;
-    }
-
-    /**
-     * 우승 기록 추가
-     */
-    public void addChampionship(String tournament, int year, String team) {
-        this.championships.add(Championship.builder()
-                .tournament(tournament)
-                .year(year)
-                .team(team)
-                .build());
-    }
-
-    /**
-     * 시즌 스탯 추가
-     */
-    public void addSeasonStats(SeasonStats stats) {
-        this.seasonStats.add(stats);
-    }
-
-    /**
-     * 은퇴 처리
-     */
-    public void retire() {
-        this.isActive = false;
-    }
-
-    /**
-     * 복귀 처리
-     */
-    public void comeback() {
-        this.isActive = true;
-    }
-
-    /**
-     * 우승 경력 여부
-     */
-    public boolean hasChampionship() {
-        return !this.championships.isEmpty();
-    }
-
-    /**
-     * 특정 대회 우승 여부
-     */
-    public boolean hasChampionship(String tournament, int year) {
-        return this.championships.stream()
-                .anyMatch(c -> c.getTournament().equals(tournament) && c.getYear() == year);
+    public boolean isChampionshipMember() {
+        return isWinner;
     }
 }
