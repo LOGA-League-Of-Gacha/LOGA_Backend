@@ -1,19 +1,22 @@
 package com.loga.domain.report.controller;
 
+import jakarta.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
 import com.loga.domain.report.dto.BugReportResponse;
 import com.loga.domain.report.dto.CreateBugReportRequest;
 import com.loga.domain.report.entity.BugReport;
 import com.loga.domain.report.service.BugReportService;
 import com.loga.domain.user.entity.User;
-import com.loga.global.common.dto.response.ApiResponse;
 import com.loga.global.common.dto.request.PageRequest;
+import com.loga.global.common.dto.response.ApiResponse;
 import com.loga.global.common.dto.response.PageResponse;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/reports")

@@ -1,20 +1,22 @@
 package com.loga.domain.statistics.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.loga.domain.player.dto.PlayerResponse;
 import com.loga.domain.statistics.dto.StatisticsResponse;
 import com.loga.domain.statistics.service.StatisticsService;
 import com.loga.global.common.dto.response.ApiResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/statistics")
 @RequiredArgsConstructor
-public class StatisticsController {
+public class StatisticsController implements StatisticsApi {
 
     private final StatisticsService statisticsService;
 

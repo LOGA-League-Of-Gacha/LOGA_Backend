@@ -1,19 +1,22 @@
 package com.loga.domain.roster.controller;
 
+import jakarta.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
 import com.loga.domain.roster.dto.CreateRosterRequest;
 import com.loga.domain.roster.dto.RosterResponse;
 import com.loga.domain.roster.dto.RosterSearchCondition;
 import com.loga.domain.roster.entity.Roster;
 import com.loga.domain.roster.service.RosterService;
 import com.loga.domain.user.entity.User;
-import com.loga.global.common.dto.response.ApiResponse;
 import com.loga.global.common.dto.request.PageRequest;
+import com.loga.global.common.dto.response.ApiResponse;
 import com.loga.global.common.dto.response.PageResponse;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * 로스터 API 컨트롤러
@@ -21,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/rosters")
 @RequiredArgsConstructor
-public class RosterController {
+public class RosterController implements RosterApi {
 
     private final RosterService rosterService;
 

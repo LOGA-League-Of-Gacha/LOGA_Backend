@@ -1,23 +1,26 @@
 package com.loga.domain.community.controller;
 
+import jakarta.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
 import com.loga.domain.community.dto.CommentResponse;
 import com.loga.domain.community.dto.CreateCommentRequest;
 import com.loga.domain.community.service.CommunityService;
 import com.loga.domain.roster.dto.RosterResponse;
 import com.loga.domain.user.entity.User;
-import com.loga.global.common.dto.response.ApiResponse;
 import com.loga.global.common.dto.request.PageRequest;
+import com.loga.global.common.dto.response.ApiResponse;
 import com.loga.global.common.dto.response.PageResponse;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/community")
 @RequiredArgsConstructor
-public class CommunityController {
+public class CommunityController implements CommunityApi {
 
     private final CommunityService communityService;
 

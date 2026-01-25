@@ -1,13 +1,15 @@
 package com.loga.domain.gacha.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
 import com.loga.domain.gacha.dto.GachaResultResponse;
 import com.loga.domain.gacha.service.GachaService;
 import com.loga.domain.user.entity.User;
 import com.loga.global.common.dto.response.ApiResponse;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * 가챠 API 컨트롤러

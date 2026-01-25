@@ -1,15 +1,18 @@
 package com.loga.domain.user.controller;
 
+import jakarta.validation.constraints.NotBlank;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
 import com.loga.domain.user.dto.TokenResponse;
 import com.loga.domain.user.dto.UserResponse;
 import com.loga.domain.user.entity.User;
 import com.loga.domain.user.service.AuthService;
 import com.loga.global.common.dto.response.ApiResponse;
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * 인증 API 컨트롤러
