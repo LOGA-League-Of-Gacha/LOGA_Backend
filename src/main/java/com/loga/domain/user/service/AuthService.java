@@ -1,5 +1,8 @@
 package com.loga.domain.user.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.loga.domain.user.dto.TokenResponse;
 import com.loga.domain.user.dto.UserResponse;
 import com.loga.domain.user.entity.User;
@@ -7,10 +10,9 @@ import com.loga.domain.user.repository.UserRepository;
 import com.loga.global.error.BusinessException;
 import com.loga.global.error.ErrorCode;
 import com.loga.infrastructure.security.JwtTokenProvider;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 인증 서비스
@@ -49,8 +51,7 @@ public class AuthService {
         String newAccessToken = jwtTokenProvider.createAccessToken(
                 user.getId(),
                 user.getEmail(),
-                user.getRole().name()
-        );
+                user.getRole().name());
         String newRefreshToken = jwtTokenProvider.createRefreshToken(user.getId());
 
         return TokenResponse.builder()

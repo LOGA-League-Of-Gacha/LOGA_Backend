@@ -2,23 +2,20 @@ package com.loga.global.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * API 버전 Interceptor
  *
  * 요청 헤더에서 API 버전을 추출하고 처리합니다.
  *
- * 지원하는 헤더:
- * - X-API-Version: 1, 2 (숫자)
- * - Accept-Version: v1, v2 (v prefix)
+ * 지원하는 헤더: - X-API-Version: 1, 2 (숫자) - Accept-Version: v1, v2 (v prefix)
  *
- * 동작:
- * 1. 헤더에서 버전 추출
- * 2. 지원하지 않는 버전이면 기본 버전(v1)으로 fallback
- * 3. 응답 헤더에 실제 사용된 버전 명시
+ * 동작: 1. 헤더에서 버전 추출 2. 지원하지 않는 버전이면 기본 버전(v1)으로 fallback 3. 응답 헤더에 실제 사용된 버전 명시
  */
 @Slf4j
 @Component

@@ -1,12 +1,11 @@
 package com.loga.domain.user.service;
 
-import com.loga.domain.user.dto.TokenResponse;
-import com.loga.domain.user.dto.UserResponse;
-import com.loga.domain.user.entity.User;
-import com.loga.domain.user.repository.UserRepository;
-import com.loga.global.error.BusinessException;
-import com.loga.global.error.ErrorCode;
-import com.loga.infrastructure.security.JwtTokenProvider;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,12 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import static org.mockito.BDDMockito.given;
+import com.loga.domain.user.dto.TokenResponse;
+import com.loga.domain.user.dto.UserResponse;
+import com.loga.domain.user.entity.User;
+import com.loga.domain.user.repository.UserRepository;
+import com.loga.global.error.BusinessException;
+import com.loga.global.error.ErrorCode;
+import com.loga.infrastructure.security.JwtTokenProvider;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {

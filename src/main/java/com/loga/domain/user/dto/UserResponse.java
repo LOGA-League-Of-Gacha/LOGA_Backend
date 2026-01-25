@@ -1,10 +1,11 @@
 package com.loga.domain.user.dto;
 
+import java.time.LocalDateTime;
+
 import com.loga.domain.user.entity.User;
+
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 /**
  * 사용자 응답 DTO

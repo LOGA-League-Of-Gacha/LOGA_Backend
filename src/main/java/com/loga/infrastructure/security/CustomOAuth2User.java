@@ -1,16 +1,16 @@
 package com.loga.infrastructure.security;
 
-import com.loga.domain.user.entity.User;
-
-import lombok.Getter;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.loga.domain.user.entity.User;
+
+import lombok.Getter;
 
 /**
  * OAuth2 인증 사용자 정보
@@ -34,7 +34,7 @@ public class CustomOAuth2User implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()
-                                                                .name()));
+                .name()));
     }
 
     @Override

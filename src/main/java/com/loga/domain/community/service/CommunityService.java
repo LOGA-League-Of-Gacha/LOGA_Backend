@@ -1,5 +1,10 @@
 package com.loga.domain.community.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.loga.domain.community.dto.CommentResponse;
 import com.loga.domain.community.dto.CreateCommentRequest;
 import com.loga.domain.community.entity.Comment;
@@ -11,12 +16,9 @@ import com.loga.domain.user.entity.User;
 import com.loga.global.common.dto.response.PageResponse;
 import com.loga.global.error.BusinessException;
 import com.loga.global.error.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -60,8 +62,7 @@ public class CommunityService {
                 user.getId(),
                 user.getNickname(),
                 user.getProfileImage(),
-                request.getContent()
-        );
+                request.getContent());
         comment = commentRepository.save(comment);
 
         roster.addComment();

@@ -1,5 +1,10 @@
 package com.loga.domain.report.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.loga.domain.report.dto.BugReportResponse;
 import com.loga.domain.report.dto.CreateBugReportRequest;
 import com.loga.domain.report.entity.BugReport;
@@ -8,12 +13,9 @@ import com.loga.domain.user.entity.User;
 import com.loga.global.common.dto.response.PageResponse;
 import com.loga.global.error.BusinessException;
 import com.loga.global.error.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -30,8 +32,7 @@ public class BugReportService {
                 request.getTitle(),
                 request.getDescription(),
                 request.getType(),
-                request.getScreenshotUrl()
-        );
+                request.getScreenshotUrl());
         report = bugReportRepository.save(report);
         log.info("Bug report created: {} - {}", report.getId(), report.getTitle());
         return BugReportResponse.from(report);
@@ -60,7 +61,8 @@ public class BugReportService {
             case IN_PROGRESS -> report.startProgress(adminNote);
             case RESOLVED -> report.resolve(adminNote);
             case REJECTED -> report.reject(adminNote);
-            default -> {}
+            default -> {
+            }
         }
 
         bugReportRepository.save(report);

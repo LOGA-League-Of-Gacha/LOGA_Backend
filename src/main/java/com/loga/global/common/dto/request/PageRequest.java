@@ -1,10 +1,10 @@
 package com.loga.global.common.dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 페이지네이션 요청 DTO NestJS 형식과 동일: page (1부터 시작), limit (기본값: 10, 최대: 100)
@@ -30,7 +30,7 @@ public class PageRequest {
      * Spring Data Pageable로 변환 page는 내부적으로 0-based로 변환됨
      */
     public Pageable toPageable() {
-        int safePage = Math.max(0, page - 1);  // 1-based -> 0-based
+        int safePage = Math.max(0, page - 1); // 1-based -> 0-based
         int safeLimit = Math.min(Math.max(1, limit), MAX_LIMIT);
         return org.springframework.data.domain.PageRequest.of(safePage, safeLimit);
     }

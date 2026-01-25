@@ -1,11 +1,12 @@
 package com.loga.domain.report.service;
 
-import com.loga.domain.report.dto.BugReportResponse;
-import com.loga.domain.report.dto.CreateBugReportRequest;
-import com.loga.domain.report.entity.BugReport;
-import com.loga.domain.report.repository.BugReportRepository;
-import com.loga.domain.user.entity.User;
-import com.loga.global.common.dto.response.PageResponse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,14 +19,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import com.loga.domain.report.dto.BugReportResponse;
+import com.loga.domain.report.dto.CreateBugReportRequest;
+import com.loga.domain.report.entity.BugReport;
+import com.loga.domain.report.repository.BugReportRepository;
+import com.loga.domain.user.entity.User;
+import com.loga.global.common.dto.response.PageResponse;
 
 @ExtendWith(MockitoExtension.class)
 class BugReportServiceTest {

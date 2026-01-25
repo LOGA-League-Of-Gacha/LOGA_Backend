@@ -1,10 +1,11 @@
 package com.loga.domain.community.dto;
 
+import java.time.LocalDateTime;
+
 import com.loga.domain.community.entity.Comment;
+
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Builder

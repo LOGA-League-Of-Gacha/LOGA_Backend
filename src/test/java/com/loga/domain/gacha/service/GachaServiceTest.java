@@ -1,14 +1,15 @@
 package com.loga.domain.gacha.service;
 
-import com.loga.domain.gacha.dto.GachaResultResponse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-import com.loga.domain.player.entity.Player;
-import com.loga.domain.player.repository.ChampionshipRepository;
-import com.loga.domain.player.repository.PlayerRepository;
-import com.loga.domain.user.entity.User;
-import com.loga.domain.user.repository.UserRepository;
-import com.loga.global.error.BusinessException;
-import com.loga.global.error.ErrorCode;
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,16 +17,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
+import com.loga.domain.gacha.dto.GachaResultResponse;
+import com.loga.domain.player.entity.Player;
+import com.loga.domain.player.repository.ChampionshipRepository;
+import com.loga.domain.player.repository.PlayerRepository;
+import com.loga.domain.user.entity.User;
+import com.loga.domain.user.repository.UserRepository;
+import com.loga.global.error.BusinessException;
+import com.loga.global.error.ErrorCode;
 
 @ExtendWith(MockitoExtension.class)
 class GachaServiceTest {

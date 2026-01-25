@@ -1,23 +1,19 @@
 package com.loga.infrastructure.security;
 
-import com.loga.global.error.BusinessException;
-import com.loga.global.error.ErrorCode;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
 
 import jakarta.annotation.PostConstruct;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * JWT 토큰 생성 및 검증 Provider
@@ -55,14 +51,14 @@ public class JwtTokenProvider {
         Date expiry = new Date(now.getTime() + accessTokenExpiration);
 
         return Jwts.builder()
-                   .subject(userId)
-                   .claim(EMAIL_CLAIM, email)
-                   .claim(ROLE_CLAIM, role)
-                   .claim(TOKEN_TYPE_CLAIM, "access")
-                   .issuedAt(now)
-                   .expiration(expiry)
-                   .signWith(secretKey)
-                   .compact();
+                .subject(userId)
+                .claim(EMAIL_CLAIM, email)
+                .claim(ROLE_CLAIM, role)
+                .claim(TOKEN_TYPE_CLAIM, "access")
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(secretKey)
+                .compact();
     }
 
     /**
@@ -73,12 +69,12 @@ public class JwtTokenProvider {
         Date expiry = new Date(now.getTime() + refreshTokenExpiration);
 
         return Jwts.builder()
-                   .subject(userId)
-                   .claim(TOKEN_TYPE_CLAIM, "refresh")
-                   .issuedAt(now)
-                   .expiration(expiry)
-                   .signWith(secretKey)
-                   .compact();
+                .subject(userId)
+                .claim(TOKEN_TYPE_CLAIM, "refresh")
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(secretKey)
+                .compact();
     }
 
     /**
@@ -149,7 +145,7 @@ public class JwtTokenProvider {
     public boolean isTokenExpired(String token) {
         try {
             return parseClaims(token).getExpiration()
-                                     .before(new Date());
+                    .before(new Date());
         } catch (ExpiredJwtException e) {
             return true;
         }
@@ -165,9 +161,9 @@ public class JwtTokenProvider {
 
     private Claims parseClaims(String token) {
         return Jwts.parser()
-                   .verifyWith(secretKey)
-                   .build()
-                   .parseSignedClaims(token)
-                   .getPayload();
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }

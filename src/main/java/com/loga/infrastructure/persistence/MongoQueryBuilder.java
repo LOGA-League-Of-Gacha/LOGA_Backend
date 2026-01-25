@@ -1,17 +1,16 @@
 package com.loga.infrastructure.persistence;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
 /**
- * MongoDB Specification 패턴 구현
- * JPA Specification과 유사한 동적 쿼리 빌더
+ * MongoDB Specification 패턴 구현 JPA Specification과 유사한 동적 쿼리 빌더
  */
 public class MongoQueryBuilder {
 
@@ -20,7 +19,8 @@ public class MongoQueryBuilder {
     private String[] includeFields;
     private String[] excludeFields;
 
-    private MongoQueryBuilder() {}
+    private MongoQueryBuilder() {
+    }
 
     public static MongoQueryBuilder builder() {
         return new MongoQueryBuilder();

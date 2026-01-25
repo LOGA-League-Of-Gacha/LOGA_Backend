@@ -1,5 +1,12 @@
 package com.loga.domain.roster.service;
 
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.loga.domain.player.entity.Championship;
 import com.loga.domain.player.entity.Player;
 import com.loga.domain.player.repository.ChampionshipRepository;
@@ -14,14 +21,9 @@ import com.loga.domain.user.repository.UserRepository;
 import com.loga.global.common.dto.response.PageResponse;
 import com.loga.global.error.BusinessException;
 import com.loga.global.error.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * 로스터 서비스
@@ -75,8 +77,7 @@ public class RosterService {
                 players,
                 championshipMatch,
                 request.isPublic(),
-                request.getGameMode()
-        );
+                request.getGameMode());
 
         roster = rosterRepository.save(roster);
 

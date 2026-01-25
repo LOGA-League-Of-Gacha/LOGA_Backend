@@ -1,10 +1,12 @@
 package com.loga.domain.report.entity;
 
-import com.loga.infrastructure.persistence.BaseDocument;
-import lombok.*;
+import java.time.LocalDateTime;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import com.loga.infrastructure.persistence.BaseDocument;
+
+import lombok.*;
 
 /**
  * 버그 리포트 도메인 엔티티
@@ -36,23 +38,20 @@ public class BugReport extends BaseDocument {
     private LocalDateTime resolvedAt;
 
     public enum ReportType {
-        BUG,           // 버그 제보
-        DATA_ERROR,    // 선수 데이터 오류
-        SUGGESTION,    // 기능 제안
+        BUG, // 버그 제보
+        DATA_ERROR, // 선수 데이터 오류
+        SUGGESTION, // 기능 제안
         OTHER
     }
 
     public enum Status {
-        PENDING,
-        IN_PROGRESS,
-        RESOLVED,
-        REJECTED
+        PENDING, IN_PROGRESS, RESOLVED, REJECTED
     }
 
     // ===== Factory Methods =====
 
     public static BugReport create(String userId, String userEmail, String title,
-                                    String description, ReportType type, String screenshotUrl) {
+            String description, ReportType type, String screenshotUrl) {
         return BugReport.builder()
                 .userId(userId)
                 .userEmail(userEmail)

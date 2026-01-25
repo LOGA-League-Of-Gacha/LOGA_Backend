@@ -1,12 +1,13 @@
 package com.loga.domain.player.entity;
 
-import com.loga.infrastructure.persistence.BaseDocument;
-import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.loga.infrastructure.persistence.BaseDocument;
+
+import lombok.*;
+
 /**
- * 우승 로스터 엔티티
- * 실제 대회 우승 로스터 정보 저장
+ * 우승 로스터 엔티티 실제 대회 우승 로스터 정보 저장
  */
 @Document(collection = "championships")
 @Getter
@@ -46,17 +47,17 @@ public class Championship extends BaseDocument {
 
         public boolean matches(String top, String jungle, String mid, String adc, String support) {
             return topPlayerId.equals(top) &&
-                   junglePlayerId.equals(jungle) &&
-                   midPlayerId.equals(mid) &&
-                   adcPlayerId.equals(adc) &&
-                   supportPlayerId.equals(support);
+                    junglePlayerId.equals(jungle) &&
+                    midPlayerId.equals(mid) &&
+                    adcPlayerId.equals(adc) &&
+                    supportPlayerId.equals(support);
         }
     }
 
     // ===== Factory Methods =====
 
     public static Championship create(String tournament, int year, String team, String region,
-                                       RosterPlayers players) {
+            RosterPlayers players) {
         return Championship.builder()
                 .tournament(tournament)
                 .year(year)

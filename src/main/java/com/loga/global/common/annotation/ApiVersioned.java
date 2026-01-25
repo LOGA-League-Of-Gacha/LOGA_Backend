@@ -27,8 +27,7 @@ import java.lang.annotation.*;
 public @interface ApiVersioned {
 
     /**
-     * 지원하는 API 버전 목록
-     * 예: "1", "2" 또는 {"1", "2"}
+     * 지원하는 API 버전 목록 예: "1", "2" 또는 {"1", "2"}
      */
     String[] value();
 }

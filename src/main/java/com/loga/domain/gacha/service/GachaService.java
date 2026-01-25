@@ -1,5 +1,10 @@
 package com.loga.domain.gacha.service;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.loga.domain.gacha.dto.GachaResultResponse;
 import com.loga.domain.player.dto.PlayerResponse;
 import com.loga.domain.player.entity.Championship;
@@ -10,12 +15,9 @@ import com.loga.domain.user.entity.User;
 import com.loga.domain.user.repository.UserRepository;
 import com.loga.global.error.BusinessException;
 import com.loga.global.error.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * 가챠 서비스
@@ -79,8 +81,7 @@ public class GachaService {
                 PlayerResponse.from(support),
                 isChampionship,
                 matchedChampionship,
-                matchedYear
-        );
+                matchedYear);
     }
 
     /**

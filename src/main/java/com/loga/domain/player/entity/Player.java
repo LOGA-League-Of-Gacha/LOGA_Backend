@@ -1,13 +1,14 @@
 package com.loga.domain.player.entity;
 
-import com.loga.infrastructure.persistence.BaseDocument;
-import lombok.*;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.loga.infrastructure.persistence.BaseDocument;
+
+import lombok.*;
+
 /**
- * 선수 도메인 엔티티 (Season Card Model)
- * 각 문서는 특정 시즌의 선수 카드를 나타냄
+ * 선수 도메인 엔티티 (Season Card Model) 각 문서는 특정 시즌의 선수 카드를 나타냄
  */
 @Document(collection = "players")
 @Getter

@@ -1,15 +1,15 @@
 package com.loga.domain.player.repository;
 
-import com.loga.domain.player.dto.PlayerSearchCondition;
-import com.loga.domain.player.entity.Player;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import com.loga.domain.player.dto.PlayerSearchCondition;
+import com.loga.domain.player.entity.Player;
 
 /**
- * 선수 커스텀 레포지토리 인터페이스
- * Specification 패턴 적용
+ * 선수 커스텀 레포지토리 인터페이스 Specification 패턴 적용
  */
 public interface PlayerRepositoryCustom {
 

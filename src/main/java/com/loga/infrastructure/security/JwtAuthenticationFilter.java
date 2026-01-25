@@ -1,15 +1,12 @@
 package com.loga.infrastructure.security;
 
-import com.loga.domain.user.entity.User;
-import com.loga.domain.user.repository.UserRepository;
+import java.io.IOException;
+import java.util.List;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,8 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.List;
+import com.loga.domain.user.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * JWT 인증 필터
@@ -37,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+            FilterChain filterChain) throws ServletException, IOException {
 
         String token = resolveToken(request);
 
@@ -47,14 +46,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userId = jwtTokenProvider.getUserIdFromToken(token);
 
             userRepository.findById(userId)
-                          .ifPresent(user -> {
-                              var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()
-                                                                                                 .name()));
-                              var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
-                              SecurityContextHolder.getContext()
-                                                   .setAuthentication(authentication);
-                              log.debug("Authenticated user: {}", user.getEmail());
-                          });
+                    .ifPresent(user -> {
+                        var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()
+                                .name()));
+                        var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+                        SecurityContextHolder.getContext()
+                                .setAuthentication(authentication);
+                        log.debug("Authenticated user: {}", user.getEmail());
+                    });
         }
 
         filterChain.doFilter(request, response);

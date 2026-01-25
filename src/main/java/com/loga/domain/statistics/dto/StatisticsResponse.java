@@ -1,11 +1,12 @@
 package com.loga.domain.statistics.dto;
 
-import com.loga.domain.player.dto.PlayerResponse;
-import lombok.Builder;
-import lombok.Getter;
-
 import java.util.List;
 import java.util.Map;
+
+import com.loga.domain.player.dto.PlayerResponse;
+
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder

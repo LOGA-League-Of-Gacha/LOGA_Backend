@@ -1,9 +1,10 @@
 package com.loga.global.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Web MVC 설정
@@ -24,7 +25,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/health",
                         "/actuator/**",
                         "/swagger-ui/**",
-                        "/v3/api-docs/**"
-                );
+                        "/v3/api-docs/**");
     }
 }

@@ -1,17 +1,18 @@
 package com.loga.domain.user.entity;
 
-import com.loga.infrastructure.persistence.BaseDocument;
-import lombok.*;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.loga.infrastructure.persistence.BaseDocument;
+
+import lombok.*;
+
 /**
- * 사용자 도메인 엔티티
- * DDD Aggregate Root
+ * 사용자 도메인 엔티티 DDD Aggregate Root
  */
 @Document(collection = "users")
 @Getter
@@ -54,7 +55,8 @@ public class User extends BaseDocument {
     /**
      * OAuth2 사용자 생성
      */
-    public static User createOAuth2User(String provider, String providerId, String email, String nickname, String profileImage) {
+    public static User createOAuth2User(String provider, String providerId, String email, String nickname,
+            String profileImage) {
         return User.builder()
                 .provider(provider)
                 .providerId(providerId)
@@ -204,8 +206,10 @@ public class User extends BaseDocument {
         }
 
         public boolean isPremium() {
-            if (!isPremium) return false;
-            if (premiumExpireAt == null) return true;
+            if (!isPremium)
+                return false;
+            if (premiumExpireAt == null)
+                return true;
             return LocalDateTime.now().isBefore(premiumExpireAt);
         }
     }

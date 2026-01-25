@@ -1,8 +1,8 @@
 package com.loga.domain.roster.dto;
 
-import com.loga.domain.roster.entity.Roster;
-
 import jakarta.validation.constraints.NotBlank;
+
+import com.loga.domain.roster.entity.Roster;
 
 import lombok.Getter;
 import lombok.Setter;

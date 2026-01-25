@@ -1,8 +1,7 @@
 package com.loga.global.error;
 
-import com.loga.global.common.dto.response.ApiResponse;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,8 +13,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.loga.global.common.dto.response.ApiResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 전역 예외 처리 핸들러
@@ -43,14 +43,12 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException e) {
 
         Map<String, String> errors = e.getBindingResult()
-                                      .getFieldErrors()
-                                      .stream()
-                                      .collect(Collectors.toMap(
-                                              FieldError::getField,
-                                              error -> error.getDefaultMessage() != null ? error.getDefaultMessage() :
-                                                      "Invalid value",
-                                              (existing, replacement) -> existing
-                                      ));
+                .getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "Invalid value",
+                        (existing, replacement) -> existing));
 
         log.warn("Validation error: {}", errors);
         return ResponseEntity
@@ -67,7 +65,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(ApiResponse.error(ErrorCode.INVALID_INPUT.getCode(),
-                                        "Missing required parameter: " + e.getParameterName()));
+                        "Missing required parameter: " + e.getParameterName()));
     }
 
     /**
@@ -79,7 +77,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(ApiResponse.error(ErrorCode.INVALID_INPUT.getCode(),
-                                        "Invalid value for parameter: " + e.getName()));
+                        "Invalid value for parameter: " + e.getName()));
     }
 
     /**
@@ -113,6 +111,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .internalServerError()
                 .body(ApiResponse.error(ErrorCode.INTERNAL_ERROR.getCode(),
-                                        "An unexpected error occurred"));
+                        "An unexpected error occurred"));
     }
 }

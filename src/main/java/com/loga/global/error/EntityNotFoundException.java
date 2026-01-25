@@ -15,6 +15,6 @@ public class EntityNotFoundException extends BusinessException {
 
     public static EntityNotFoundException of(ErrorCode errorCode, String entityName, String id) {
         return new EntityNotFoundException(errorCode,
-                                           String.format("%s not found with id: %s", entityName, id));
+                String.format("%s not found with id: %s", entityName, id));
     }
 }

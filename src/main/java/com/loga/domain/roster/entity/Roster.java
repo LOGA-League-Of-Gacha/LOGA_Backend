@@ -1,16 +1,17 @@
 package com.loga.domain.roster.entity;
 
-import com.loga.infrastructure.persistence.BaseDocument;
-import lombok.*;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.loga.infrastructure.persistence.BaseDocument;
+
+import lombok.*;
+
 /**
- * 로스터 도메인 엔티티
- * DDD Aggregate Root
+ * 로스터 도메인 엔티티 DDD Aggregate Root
  */
 @Document(collection = "rosters")
 @Getter
@@ -142,12 +143,18 @@ public class Roster extends BaseDocument {
         }
 
         private String calculateTier(int score) {
-            if (score >= 2400) return "CHALLENGER";
-            if (score >= 2000) return "MASTER";
-            if (score >= 1600) return "DIAMOND";
-            if (score >= 1400) return "PLATINUM";
-            if (score >= 1200) return "GOLD";
-            if (score >= 1000) return "SILVER";
+            if (score >= 2400)
+                return "CHALLENGER";
+            if (score >= 2000)
+                return "MASTER";
+            if (score >= 1600)
+                return "DIAMOND";
+            if (score >= 1400)
+                return "PLATINUM";
+            if (score >= 1200)
+                return "GOLD";
+            if (score >= 1000)
+                return "SILVER";
             return "BRONZE";
         }
     }
@@ -155,7 +162,7 @@ public class Roster extends BaseDocument {
     // ===== Factory Methods =====
 
     public static Roster create(String userId, String userName, RosterPlayers players,
-                                 ChampionshipMatch championshipMatch, boolean isPublic, GameMode gameMode) {
+            ChampionshipMatch championshipMatch, boolean isPublic, GameMode gameMode) {
         Roster roster = Roster.builder()
                 .userId(userId)
                 .userName(userName)

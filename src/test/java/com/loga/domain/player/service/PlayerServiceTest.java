@@ -1,10 +1,13 @@
 package com.loga.domain.player.service;
 
-import com.loga.domain.player.dto.PlayerResponse;
-import com.loga.domain.player.entity.Player;
-import com.loga.domain.player.repository.PlayerRepository;
-import com.loga.global.error.BusinessException;
-import com.loga.global.error.ErrorCode;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,14 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import com.loga.domain.player.dto.PlayerResponse;
+import com.loga.domain.player.entity.Player;
+import com.loga.domain.player.repository.PlayerRepository;
+import com.loga.global.error.BusinessException;
+import com.loga.global.error.ErrorCode;
 
 @ExtendWith(MockitoExtension.class)
 class PlayerServiceTest {

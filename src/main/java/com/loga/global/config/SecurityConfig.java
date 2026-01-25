@@ -1,10 +1,7 @@
 package com.loga.global.config;
 
-import com.loga.infrastructure.security.CustomOAuth2UserService;
-import com.loga.infrastructure.security.JwtAuthenticationFilter;
-import com.loga.infrastructure.security.OAuth2AuthenticationSuccessHandler;
-
-import lombok.RequiredArgsConstructor;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,8 +20,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-import java.util.List;
+import com.loga.infrastructure.security.CustomOAuth2UserService;
+import com.loga.infrastructure.security.JwtAuthenticationFilter;
+import com.loga.infrastructure.security.OAuth2AuthenticationSuccessHandler;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Spring Security 설정
@@ -86,7 +86,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/reports")
                         .permitAll()
                         // Swagger UI
-                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**")
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**",
+                                "/swagger-resources/**")
                         .permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info")
                         .permitAll()
@@ -95,8 +96,7 @@ public class SecurityConfig {
                         .hasRole("ADMIN")
                         // Authenticated endpoints
                         .anyRequest()
-                        .authenticated()
-                )
+                        .authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         // OAuth2 설정은 Google 자격 증명이 있을 때만 활성화
@@ -114,9 +114,9 @@ public class SecurityConfig {
                     .failureHandler((request, response, exception) -> {
                         response.setStatus(401);
                         response.setContentType("application/json;charset=UTF-8");
-                        response.getWriter().write("{\"success\":false,\"message\":\"OAuth2 authentication failed: " + exception.getMessage() + "\"}");
-                    })
-            );
+                        response.getWriter().write("{\"success\":false,\"message\":\"OAuth2 authentication failed: "
+                                + exception.getMessage() + "\"}");
+                    }));
         }
 
         // OAuth2 이후에 다시 설정하여 리다이렉트 방지 (최종 오버라이드)
@@ -131,12 +131,9 @@ public class SecurityConfig {
         // TODO: OAuth2 로그인 기능 구현 시 별도 설정 필요
         return false;
         /*
-        return googleClientId != null
-                && !googleClientId.isBlank()
-                && !googleClientId.equals("your-google-client-id")
-                && customOAuth2UserService != null
-                && oAuth2AuthenticationSuccessHandler != null;
-        */
+         * return googleClientId != null && !googleClientId.isBlank() && !googleClientId.equals("your-google-client-id")
+         * && customOAuth2UserService != null && oAuth2AuthenticationSuccessHandler != null;
+         */
     }
 
     @Bean
@@ -144,7 +141,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "X-API-Version", "Accept-Version"));
+        configuration.setAllowedHeaders(
+                Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "X-API-Version", "Accept-Version"));
         configuration.setExposedHeaders(Arrays.asList("Authorization", "X-API-Version"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);

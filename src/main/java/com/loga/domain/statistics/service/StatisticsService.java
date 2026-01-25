@@ -1,19 +1,21 @@
 package com.loga.domain.statistics.service;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.loga.domain.player.dto.PlayerResponse;
 import com.loga.domain.player.entity.Player;
 import com.loga.domain.player.repository.PlayerRepository;
 import com.loga.domain.roster.repository.RosterRepository;
 import com.loga.domain.statistics.dto.StatisticsResponse;
 import com.loga.domain.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +49,6 @@ public class StatisticsService {
                         position -> playerRepository.findByPosition(position).stream()
                                 .max((p1, p2) -> Integer.compare(p1.getPickedCount(), p2.getPickedCount()))
                                 .map(PlayerResponse::from)
-                                .orElse(null)
-                ));
+                                .orElse(null)));
     }
 }

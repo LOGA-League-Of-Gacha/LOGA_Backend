@@ -1,9 +1,11 @@
 package com.loga.domain.community.entity;
 
-import com.loga.infrastructure.persistence.BaseDocument;
-import lombok.*;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.loga.infrastructure.persistence.BaseDocument;
+
+import lombok.*;
 
 /**
  * 댓글 도메인 엔티티
@@ -29,7 +31,7 @@ public class Comment extends BaseDocument {
     // ===== Factory Methods =====
 
     public static Comment create(String rosterId, String userId, String userName,
-                                  String userProfileImage, String content) {
+            String userProfileImage, String content) {
         return Comment.builder()
                 .rosterId(rosterId)
                 .userId(userId)

@@ -1,9 +1,10 @@
 package com.loga.domain.roster.repository;
 
-import com.loga.domain.roster.dto.RosterSearchCondition;
-import com.loga.domain.roster.entity.Roster;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import com.loga.domain.roster.dto.RosterSearchCondition;
+import com.loga.domain.roster.entity.Roster;
 
 /**
  * 로스터 커스텀 레포지토리 인터페이스

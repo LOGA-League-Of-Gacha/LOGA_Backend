@@ -1,12 +1,12 @@
 package com.loga.domain.player.dto;
 
 import com.loga.domain.player.entity.Player;
+
 import lombok.Builder;
 import lombok.Getter;
 
 /**
- * 선수 검색 조건 DTO
- * Specification 패턴 적용
+ * 선수 검색 조건 DTO Specification 패턴 적용
  */
 @Getter
 @Builder

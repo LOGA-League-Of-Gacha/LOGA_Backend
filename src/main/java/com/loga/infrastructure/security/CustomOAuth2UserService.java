@@ -1,10 +1,6 @@
 package com.loga.infrastructure.security;
 
-import com.loga.domain.user.entity.User;
-import com.loga.domain.user.repository.UserRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -14,7 +10,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
+import com.loga.domain.user.entity.User;
+import com.loga.domain.user.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * OAuth2 사용자 정보 처리 서비스
@@ -22,10 +22,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(
-        name = "spring.security.oauth2.client.registration.google.client-id",
-        matchIfMissing = false
-)
+@ConditionalOnProperty(name = "spring.security.oauth2.client.registration.google.client-id", matchIfMissing = false)
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
@@ -36,7 +33,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String provider = userRequest.getClientRegistration()
-                                     .getRegistrationId();
+                .getRegistrationId();
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         String providerId = (String) attributes.get("sub");
@@ -45,7 +42,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String picture = (String) attributes.get("picture");
 
         User user = userRepository.findByProviderAndProviderId(provider, providerId)
-                                  .orElseGet(() -> createUser(provider, providerId, email, name, picture));
+                .orElseGet(() -> createUser(provider, providerId, email, name, picture));
 
         // Update profile if changed
         boolean updated = false;

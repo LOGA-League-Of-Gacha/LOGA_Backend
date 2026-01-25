@@ -1,6 +1,7 @@
 package com.loga.infrastructure.persistence;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -8,8 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 /**
  * MongoDB 커스텀 리포지토리 구현체
@@ -33,8 +33,8 @@ public abstract class CustomMongoRepositoryImpl<T> implements CustomMongoReposit
     @Override
     public Page<T> findAll(Query query, Pageable pageable) {
         long total = mongoTemplate.count(Query.of(query)
-                                              .limit(-1)
-                                              .skip(-1), domainClass);
+                .limit(-1)
+                .skip(-1), domainClass);
         query.with(pageable);
         List<T> content = mongoTemplate.find(query, domainClass);
         return new PageImpl<>(content, pageable, total);

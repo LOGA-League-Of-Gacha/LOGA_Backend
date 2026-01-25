@@ -1,9 +1,7 @@
 package com.loga.domain.player.repository;
 
-import com.loga.domain.player.dto.PlayerSearchCondition;
-import com.loga.domain.player.entity.Player;
-import com.loga.infrastructure.persistence.MongoQueryBuilder;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -12,11 +10,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.loga.domain.player.dto.PlayerSearchCondition;
+import com.loga.domain.player.entity.Player;
+import com.loga.infrastructure.persistence.MongoQueryBuilder;
+
+import lombok.RequiredArgsConstructor;
 
 /**
- * 선수 커스텀 레포지토리 구현체
- * MongoDB Specification 패턴 적용
+ * 선수 커스텀 레포지토리 구현체 MongoDB Specification 패턴 적용
  */
 @Repository
 @RequiredArgsConstructor

@@ -1,10 +1,11 @@
 package com.loga.domain.report.dto;
 
+import java.time.LocalDateTime;
+
 import com.loga.domain.report.entity.BugReport;
+
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Builder

@@ -1,12 +1,13 @@
 package com.loga.domain.report.repository;
 
-import com.loga.domain.report.entity.BugReport;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.loga.domain.report.entity.BugReport;
 
 /**
  * 버그 리포트 레포지토리
