@@ -59,6 +59,14 @@ fi
 
 echo -e "${BLUE}Deploying to ${NEW_CONTAINER} container...${NC}"
 
+# 고아 컨테이너 정리 (이전 배포 실패로 남은 컨테이너 제거)
+echo -e "${YELLOW}Cleaning up orphan containers...${NC}"
+# 컨테이너 이름에 loga_blue 또는 loga_green이 포함된 모든 컨테이너 제거
+for container in $(docker ps -a --format '{{.Names}}' | grep -E "(^|_)loga_${NEW_CONTAINER}$" || true); do
+    echo -e "${YELLOW}Removing orphan container: ${container}${NC}"
+    docker rm -f "$container" 2>/dev/null || true
+done
+
 # 새 컨테이너 배포
 docker compose up -d --no-deps --build ${NEW_CONTAINER}
 
@@ -108,7 +116,13 @@ else
     echo -e "${RED}Rolling back to ${CURRENT_CONTAINER}...${NC}"
     echo -e "${RED}========================================${NC}"
 
-    docker compose stop ${NEW_CONTAINER}
+    # 실패한 컨테이너 정리
+    docker compose stop ${NEW_CONTAINER} 2>/dev/null || true
+    for container in $(docker ps -a --format '{{.Names}}' | grep -E "(^|_)loga_${NEW_CONTAINER}$" || true); do
+        echo -e "${YELLOW}Removing failed container: ${container}${NC}"
+        docker rm -f "$container" 2>/dev/null || true
+    done
+
     docker compose start ${CURRENT_CONTAINER}
 
     exit 1

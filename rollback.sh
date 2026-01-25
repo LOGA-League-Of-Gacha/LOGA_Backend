@@ -47,12 +47,44 @@ ROLLBACK_VERSION=$(sed -n "${TARGET_LINE}p" .deploy_history)
 echo -e "${YELLOW}Current version: ${CURRENT_VERSION}${NC}"
 echo -e "${YELLOW}Rolling back to: ${ROLLBACK_VERSION}${NC}"
 
-# 롤백 대상 이미지 확인
+# 환경 변수 로드
+if [ -f .env.production ]; then
+    export $(cat .env.production | grep -v '^#' | xargs)
+fi
+
+# GCP Artifact Registry 설정
+GAR_LOCATION=${GAR_LOCATION:-asia-northeast3-docker.pkg.dev}
+GCP_PROJECT_ID=${GCP_PROJECT_ID:-}
+SERVICE_NAME=${SERVICE_NAME:-loga}
+
+# 롤백 대상 이미지 확인 (로컬에 없으면 GCP Registry에서 pull)
 if ! docker images loga-backend:${ROLLBACK_VERSION} --format "{{.Tag}}" | grep -q "${ROLLBACK_VERSION}"; then
-    echo -e "${RED}Rollback image not found: loga-backend:${ROLLBACK_VERSION}${NC}"
-    echo -e "${YELLOW}Available images:${NC}"
-    docker images loga-backend --format "table {{.Tag}}\t{{.CreatedAt}}"
-    exit 1
+    echo -e "${YELLOW}Local image not found: loga-backend:${ROLLBACK_VERSION}${NC}"
+
+    # GCP Artifact Registry에서 pull 시도
+    if [ -n "$GCP_PROJECT_ID" ] && [ -f /home/ubuntu/gcp-service-account.json ]; then
+        echo -e "${BLUE}Attempting to pull from GCP Artifact Registry...${NC}"
+
+        gcloud auth activate-service-account --key-file=/home/ubuntu/gcp-service-account.json --quiet
+        gcloud auth configure-docker $GAR_LOCATION --quiet
+
+        REMOTE_IMAGE="${GAR_LOCATION}/${GCP_PROJECT_ID}/${SERVICE_NAME}/loga-backend:${ROLLBACK_VERSION}"
+
+        if docker pull "$REMOTE_IMAGE" 2>/dev/null; then
+            echo -e "${GREEN}Successfully pulled from GCP Registry${NC}"
+            docker tag "$REMOTE_IMAGE" loga-backend:${ROLLBACK_VERSION}
+        else
+            echo -e "${RED}Failed to pull from GCP Registry: ${REMOTE_IMAGE}${NC}"
+            echo -e "${YELLOW}Available local images:${NC}"
+            docker images loga-backend --format "table {{.Tag}}\t{{.CreatedAt}}"
+            exit 1
+        fi
+    else
+        echo -e "${RED}Rollback image not found locally and GCP credentials not configured${NC}"
+        echo -e "${YELLOW}Available local images:${NC}"
+        docker images loga-backend --format "table {{.Tag}}\t{{.CreatedAt}}"
+        exit 1
+    fi
 fi
 
 # 현재 활성 컨테이너 확인
