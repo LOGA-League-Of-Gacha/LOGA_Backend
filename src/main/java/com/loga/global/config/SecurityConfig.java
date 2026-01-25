@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -51,15 +52,24 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // REST API용 AuthenticationEntryPoint (리다이렉트 대신 401 JSON 반환)
+        AuthenticationEntryPoint restAuthenticationEntryPoint = (request, response, authException) -> {
+            response.setStatus(401);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"success\":false,\"message\":\"Unauthorized\"}");
+        };
+
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers("/api/auth/**")
                         .permitAll()
-                        .requestMatchers("/oauth2/**")
+                        .requestMatchers("/oauth2/**", "/login/oauth2/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/players/**")
                         .permitAll()
@@ -90,34 +100,43 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         // OAuth2 설정은 Google 자격 증명이 있을 때만 활성화
+        // REST API 백엔드: 자동 리다이렉트 완전 비활성화
         if (isOAuth2Enabled()) {
             http.oauth2Login(oauth2 -> oauth2
-                    .loginPage("/api/auth/login")  // 커스텀 로그인 페이지 (리다이렉트 방지)
+                    // 가짜 로그인 페이지 설정으로 자동 리다이렉트 비활성화
+                    // 프론트엔드에서 직접 /oauth2/authorization/google 호출해야 함
+                    .loginPage("/oauth2/authorization/google")
+                    .loginProcessingUrl("/login/oauth2/code/*")
                     .authorizationEndpoint(auth -> auth
-                            .baseUri("/oauth2/authorization"))  // OAuth2 시작점 명시
+                            .baseUri("/oauth2/authorization"))
                     .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                     .successHandler(oAuth2AuthenticationSuccessHandler)
+                    .failureHandler((request, response, exception) -> {
+                        response.setStatus(401);
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.getWriter().write("{\"success\":false,\"message\":\"OAuth2 authentication failed: " + exception.getMessage() + "\"}");
+                    })
             );
         }
 
-        // 인증 실패 시 401 반환 (리다이렉트 대신)
-        http.exceptionHandling(ex -> ex
-                .authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(401);
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"success\":false,\"message\":\"Unauthorized\"}");
-                })
-        );
+        // OAuth2 이후에 다시 설정하여 리다이렉트 방지 (최종 오버라이드)
+        http.exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthenticationEntryPoint));
 
         return http.build();
     }
 
     private boolean isOAuth2Enabled() {
+        // OAuth2 자동 리다이렉트 비활성화 (REST API 백엔드)
+        // OAuth2 로그인은 프론트엔드에서 직접 /oauth2/authorization/google 호출
+        // TODO: OAuth2 로그인 기능 구현 시 별도 설정 필요
+        return false;
+        /*
         return googleClientId != null
                 && !googleClientId.isBlank()
                 && !googleClientId.equals("your-google-client-id")
                 && customOAuth2UserService != null
                 && oAuth2AuthenticationSuccessHandler != null;
+        */
     }
 
     @Bean

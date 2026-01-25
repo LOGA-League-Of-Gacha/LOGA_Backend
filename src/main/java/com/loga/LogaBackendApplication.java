@@ -6,9 +6,9 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 
 @SpringBootApplication
 @EnableMongoAuditing
-public class LogBackendApplication {
+public class LogaBackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LogBackendApplication.class, args);
+        SpringApplication.run(LogaBackendApplication.class, args);
     }
 }
