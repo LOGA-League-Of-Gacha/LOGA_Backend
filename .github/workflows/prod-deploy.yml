@@ -46,6 +46,9 @@ jobs:
                   git fetch origin main
                   git reset --hard origin/main
 
+                  echo '=== Cleaning old build artifacts ==='
+                  rm -rf build
+
                   echo '=== Building Docker image (Native ARM64) ==='
                   docker build -t loga-backend:\$COMMIT_SHA -t loga-backend:latest .
 
